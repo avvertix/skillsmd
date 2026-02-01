@@ -1,0 +1,54 @@
+[project]
+name = "skillsmd"
+version = "0.1.0"
+description = "The open agent skills ecosystem - Python CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "Alessio", email = "5672748+avvertix@users.noreply.github.com" }
+]
+keywords = ["skills", "agents", "cli", "ai", "llm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "typer>=0.9",
+    "rich>=13.0",
+    "python-frontmatter>=1.0",
+    "httpx>=0.25",
+    "gitpython>=3.1",
+]
+
+[project.scripts]
+skillsmd = "skillsmd:main"
+
+[project.urls]
+Homepage = "https://skills.sh"
+Repository = "https://github.com/vercel-labs/skills"
+
+[build-system]
+requires = ["uv_build>=0.9.3,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
