@@ -4,7 +4,6 @@ These tests verify the skill matching logic. Multi-word skill names
 must be quoted on the command line (e.g., --skill "Convex Best Practices").
 """
 
-
 from skillsmd.skills import filter_skills
 from skillsmd.types import Skill
 

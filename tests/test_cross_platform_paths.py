@@ -7,7 +7,6 @@ They test the actual logic used in the codebase for path manipulation.
 import os
 
 
-
 def shorten_path(full_path: str, cwd: str, home: str, path_sep: str) -> str:
     """Simulate the shorten_path function from add.py (cross-platform version)."""
     # Ensure we match complete path segments by checking for separator after the prefix

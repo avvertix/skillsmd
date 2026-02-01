@@ -6,7 +6,6 @@ These tests verify the sanitization logic for skill names to ensure:
 - Special characters are handled safely
 """
 
-
 from skillsmd.installer import sanitize_name
 
 
