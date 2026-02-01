@@ -1,7 +1,7 @@
 """skillsmd - The open agent skills ecosystem."""
 
-__version__ = "0.1.0"
+__version__ = '0.1.0'
 
-from .cli import main
+from skillsmd.cli import main
 
-__all__ = ["main", "__version__"]
+__all__ = ['main', '__version__']

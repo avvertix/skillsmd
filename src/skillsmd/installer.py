@@ -6,10 +6,10 @@ import re
 import shutil
 from pathlib import Path
 
-from .agents import get_agents, get_agent_config, detect_installed_agents
-from .constants import AGENTS_DIR, SKILLS_SUBDIR
-from .skills import parse_skill_md
-from .types import (
+from skillsmd.agents import get_agents, get_agent_config, detect_installed_agents
+from skillsmd.constants import AGENTS_DIR, SKILLS_SUBDIR
+from skillsmd.skills import parse_skill_md
+from skillsmd.types import (
     InstallMode,
     InstallResult,
     InstalledSkill,
@@ -17,8 +17,8 @@ from .types import (
     Skill,
 )
 
-EXCLUDE_FILES = {"README.md", "metadata.json"}
-EXCLUDE_DIRS = {".git"}
+EXCLUDE_FILES = {'README.md', 'metadata.json'}
+EXCLUDE_DIRS = {'.git'}
 
 
 def sanitize_name(name: str) -> str:
@@ -28,11 +28,11 @@ def sanitize_name(name: str) -> str:
     """
     # Convert to lowercase and replace non-alphanumeric chars with hyphens
     sanitized = name.lower()
-    sanitized = re.sub(r"[^a-z0-9._]+", "-", sanitized)
+    sanitized = re.sub(r'[^a-z0-9._]+', '-', sanitized)
     # Remove leading/trailing dots and hyphens
-    sanitized = re.sub(r"^[.\-]+|[.\-]+$", "", sanitized)
+    sanitized = re.sub(r'^[.\-]+|[.\-]+$', '', sanitized)
     # Limit to 255 chars and provide fallback
-    return sanitized[:255] or "unnamed-skill"
+    return sanitized[:255] or 'unnamed-skill'
 
 
 def _is_path_safe(base_path: Path, target_path: Path) -> bool:
@@ -44,11 +44,15 @@ def _is_path_safe(base_path: Path, target_path: Path) -> bool:
     # Normalize paths without resolving symlinks
     # Use os.path.normpath to handle .. and . without following symlinks
     import os
+
     normalized_base = os.path.normpath(os.path.abspath(str(base_path)))
     normalized_target = os.path.normpath(os.path.abspath(str(target_path)))
 
     # Check if target starts with base path
-    return normalized_target.startswith(normalized_base + os.sep) or normalized_target == normalized_base
+    return (
+        normalized_target.startswith(normalized_base + os.sep)
+        or normalized_target == normalized_base
+    )
 
 
 def get_canonical_skills_dir(is_global: bool, cwd: str | None = None) -> Path:
@@ -104,12 +108,12 @@ async def _create_symlink(target: Path, link_path: Path) -> bool:
             relative_target = str(target)
 
         # Use junction on Windows, symlink on Unix
-        if platform.system() == "Windows":
+        if platform.system() == 'Windows':
             # On Windows, use junction for directories
             import subprocess
 
             result = subprocess.run(
-                ["cmd", "/c", "mklink", "/J", str(link_path), str(target)],
+                ['cmd', '/c', 'mklink', '/J', str(link_path), str(target)],
                 capture_output=True,
                 text=True,
             )
@@ -126,7 +130,7 @@ def _is_excluded(name: str, is_directory: bool = False) -> bool:
     """Check if a file/directory should be excluded from copying."""
     if name in EXCLUDE_FILES:
         return True
-    if name.startswith("_"):
+    if name.startswith('_'):
         return True
     if is_directory and name in EXCLUDE_DIRS:
         return True
@@ -161,7 +165,7 @@ async def install_skill_for_agent(
     agent_type: str,
     is_global: bool = False,
     cwd: str | None = None,
-    mode: InstallMode = "symlink",
+    mode: InstallMode = 'symlink',
 ) -> InstallResult:
     """Install a skill for a specific agent."""
     agents = get_agents()
@@ -170,9 +174,9 @@ async def install_skill_for_agent(
     if not agent:
         return InstallResult(
             success=False,
-            path="",
+            path='',
             mode=mode,
-            error=f"Unknown agent: {agent_type}",
+            error=f'Unknown agent: {agent_type}',
         )
 
     working_dir = cwd or str(Path.cwd())
@@ -181,9 +185,9 @@ async def install_skill_for_agent(
     if is_global and agent.global_skills_dir is None:
         return InstallResult(
             success=False,
-            path="",
+            path='',
             mode=mode,
-            error=f"{agent.display_name} does not support global skill installation",
+            error=f'{agent.display_name} does not support global skill installation',
         )
 
     # Sanitize skill name
@@ -207,7 +211,7 @@ async def install_skill_for_agent(
             success=False,
             path=str(agent_dir),
             mode=mode,
-            error="Invalid skill name: potential path traversal detected",
+            error='Invalid skill name: potential path traversal detected',
         )
 
     if not _is_path_safe(agent_base, agent_dir):
@@ -215,21 +219,21 @@ async def install_skill_for_agent(
             success=False,
             path=str(agent_dir),
             mode=mode,
-            error="Invalid skill name: potential path traversal detected",
+            error='Invalid skill name: potential path traversal detected',
         )
 
     try:
         skill_path = Path(skill.path)
 
         # For copy mode, skip canonical directory and copy directly
-        if mode == "copy":
+        if mode == 'copy':
             await _clean_and_create_directory(agent_dir)
             await _copy_directory(skill_path, agent_dir)
 
             return InstallResult(
                 success=True,
                 path=str(agent_dir),
-                mode="copy",
+                mode='copy',
             )
 
         # Symlink mode: copy to canonical location and symlink to agent location
@@ -247,7 +251,7 @@ async def install_skill_for_agent(
                 success=True,
                 path=str(agent_dir),
                 canonical_path=str(canonical_dir),
-                mode="symlink",
+                mode='symlink',
                 symlink_failed=True,
             )
 
@@ -255,7 +259,7 @@ async def install_skill_for_agent(
             success=True,
             path=str(agent_dir),
             canonical_path=str(canonical_dir),
-            mode="symlink",
+            mode='symlink',
         )
 
     except Exception as e:
@@ -272,7 +276,7 @@ async def install_remote_skill_for_agent(
     agent_type: str,
     is_global: bool = False,
     cwd: str | None = None,
-    mode: InstallMode = "symlink",
+    mode: InstallMode = 'symlink',
 ) -> InstallResult:
     """Install a remote skill for a specific agent."""
     agents = get_agents()
@@ -281,9 +285,9 @@ async def install_remote_skill_for_agent(
     if not agent:
         return InstallResult(
             success=False,
-            path="",
+            path='',
             mode=mode,
-            error=f"Unknown agent: {agent_type}",
+            error=f'Unknown agent: {agent_type}',
         )
 
     working_dir = cwd or str(Path.cwd())
@@ -292,9 +296,9 @@ async def install_remote_skill_for_agent(
     if is_global and agent.global_skills_dir is None:
         return InstallResult(
             success=False,
-            path="",
+            path='',
             mode=mode,
-            error=f"{agent.display_name} does not support global skill installation",
+            error=f'{agent.display_name} does not support global skill installation',
         )
 
     # Sanitize skill name
@@ -317,7 +321,7 @@ async def install_remote_skill_for_agent(
             success=False,
             path=str(agent_dir),
             mode=mode,
-            error="Invalid skill name: potential path traversal detected",
+            error='Invalid skill name: potential path traversal detected',
         )
 
     if not _is_path_safe(agent_base, agent_dir):
@@ -325,40 +329,40 @@ async def install_remote_skill_for_agent(
             success=False,
             path=str(agent_dir),
             mode=mode,
-            error="Invalid skill name: potential path traversal detected",
+            error='Invalid skill name: potential path traversal detected',
         )
 
     try:
         # For copy mode, write directly to agent location
-        if mode == "copy":
+        if mode == 'copy':
             await _clean_and_create_directory(agent_dir)
-            skill_md_path = agent_dir / "SKILL.md"
-            skill_md_path.write_text(skill.content, encoding="utf-8")
+            skill_md_path = agent_dir / 'SKILL.md'
+            skill_md_path.write_text(skill.content, encoding='utf-8')
 
             return InstallResult(
                 success=True,
                 path=str(agent_dir),
-                mode="copy",
+                mode='copy',
             )
 
         # Symlink mode: write to canonical location and symlink
         await _clean_and_create_directory(canonical_dir)
-        skill_md_path = canonical_dir / "SKILL.md"
-        skill_md_path.write_text(skill.content, encoding="utf-8")
+        skill_md_path = canonical_dir / 'SKILL.md'
+        skill_md_path.write_text(skill.content, encoding='utf-8')
 
         symlink_created = await _create_symlink(canonical_dir, agent_dir)
 
         if not symlink_created:
             # Symlink failed, fall back to copy
             await _clean_and_create_directory(agent_dir)
-            agent_skill_md = agent_dir / "SKILL.md"
-            agent_skill_md.write_text(skill.content, encoding="utf-8")
+            agent_skill_md = agent_dir / 'SKILL.md'
+            agent_skill_md.write_text(skill.content, encoding='utf-8')
 
             return InstallResult(
                 success=True,
                 path=str(agent_dir),
                 canonical_path=str(canonical_dir),
-                mode="symlink",
+                mode='symlink',
                 symlink_failed=True,
             )
 
@@ -366,7 +370,7 @@ async def install_remote_skill_for_agent(
             success=True,
             path=str(agent_dir),
             canonical_path=str(canonical_dir),
-            mode="symlink",
+            mode='symlink',
         )
 
     except Exception as e:
@@ -422,7 +426,7 @@ def get_install_path(
     agent = agents.get(agent_type)
 
     if not agent:
-        raise ValueError(f"Unknown agent: {agent_type}")
+        raise ValueError(f'Unknown agent: {agent_type}')
 
     working_dir = cwd or str(Path.cwd())
     sanitized = sanitize_name(skill_name)
@@ -435,7 +439,7 @@ def get_install_path(
     install_path = target_base / sanitized
 
     if not _is_path_safe(target_base, install_path):
-        raise ValueError("Invalid skill name: potential path traversal detected")
+        raise ValueError('Invalid skill name: potential path traversal detected')
 
     return install_path
 
@@ -451,7 +455,7 @@ def get_canonical_path(
     canonical_path = canonical_base / sanitized
 
     if not _is_path_safe(canonical_base, canonical_path):
-        raise ValueError("Invalid skill name: potential path traversal detected")
+        raise ValueError('Invalid skill name: potential path traversal detected')
 
     return canonical_path
 
@@ -487,7 +491,7 @@ async def list_installed_skills(
                 if not entry.is_dir():
                     continue
 
-                skill_md_path = entry / "SKILL.md"
+                skill_md_path = entry / 'SKILL.md'
 
                 if not skill_md_path.exists():
                     continue
@@ -523,7 +527,7 @@ async def list_installed_skills(
                     possible_names = [
                         entry.name,
                         sanitized_skill_name,
-                        skill.name.lower().replace(" ", "-"),
+                        skill.name.lower().replace(' ', '-'),
                     ]
 
                     found = False
@@ -543,7 +547,7 @@ async def list_installed_skills(
                         description=skill.description,
                         path=str(entry),
                         canonical_path=str(entry),
-                        scope="global" if scope_global else "project",
+                        scope='global' if scope_global else 'project',
                         agents=installed_agents,
                     )
                 )

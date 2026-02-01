@@ -6,9 +6,9 @@ from typing import Any
 
 import frontmatter
 
-from .types import Skill
+from skillsmd.types import Skill
 
-SKIP_DIRS = {"node_modules", ".git", "dist", "build", "__pycache__", ".venv", "venv"}
+SKIP_DIRS = {'node_modules', '.git', 'dist', 'build', '__pycache__', '.venv', 'venv'}
 
 
 def should_install_internal_skills() -> bool:
@@ -16,13 +16,13 @@ def should_install_internal_skills() -> bool:
     Check if internal skills should be installed.
     Internal skills are hidden by default unless INSTALL_INTERNAL_SKILLS=1 is set.
     """
-    env_value = os.environ.get("INSTALL_INTERNAL_SKILLS", "")
-    return env_value in ("1", "true")
+    env_value = os.environ.get('INSTALL_INTERNAL_SKILLS', '')
+    return env_value in ('1', 'true')
 
 
 async def _has_skill_md(dir_path: Path) -> bool:
     """Check if a directory contains a SKILL.md file."""
-    skill_path = dir_path / "SKILL.md"
+    skill_path = dir_path / 'SKILL.md'
     return skill_path.is_file()
 
 
@@ -35,20 +35,24 @@ async def parse_skill_md(
     Returns None if the file is invalid or should be skipped.
     """
     try:
-        content = skill_md_path.read_text(encoding="utf-8")
+        content = skill_md_path.read_text(encoding='utf-8')
         post = frontmatter.loads(content)
 
-        name = post.get("name")
-        description = post.get("description")
+        name = post.get('name')
+        description = post.get('description')
 
         if not name or not description:
             return None
 
         # Check for internal skills
-        metadata: dict[str, Any] = post.get("metadata", {}) or {}
-        is_internal = metadata.get("internal", False) is True
+        metadata: dict[str, Any] = post.get('metadata', {}) or {}
+        is_internal = metadata.get('internal', False) is True
 
-        if is_internal and not should_install_internal_skills() and not include_internal:
+        if (
+            is_internal
+            and not should_install_internal_skills()
+            and not include_internal
+        ):
             return None
 
         return Skill(
@@ -113,7 +117,7 @@ async def discover_skills(
 
     # If pointing directly at a skill, add it
     if await _has_skill_md(search_path):
-        skill = await parse_skill_md(search_path / "SKILL.md", include_internal)
+        skill = await parse_skill_md(search_path / 'SKILL.md', include_internal)
         if skill:
             skills.append(skill)
             seen_names.add(skill.name)
@@ -124,36 +128,36 @@ async def discover_skills(
     # Search common skill locations first
     priority_search_dirs = [
         search_path,
-        search_path / "skills",
-        search_path / "skills" / ".curated",
-        search_path / "skills" / ".experimental",
-        search_path / "skills" / ".system",
-        search_path / ".agent" / "skills",
-        search_path / ".agents" / "skills",
-        search_path / ".claude" / "skills",
-        search_path / ".cline" / "skills",
-        search_path / ".codebuddy" / "skills",
-        search_path / ".codex" / "skills",
-        search_path / ".commandcode" / "skills",
-        search_path / ".continue" / "skills",
-        search_path / ".cursor" / "skills",
-        search_path / ".github" / "skills",
-        search_path / ".goose" / "skills",
-        search_path / ".iflow" / "skills",
-        search_path / ".junie" / "skills",
-        search_path / ".kilocode" / "skills",
-        search_path / ".kiro" / "skills",
-        search_path / ".mux" / "skills",
-        search_path / ".neovate" / "skills",
-        search_path / ".openclaude" / "skills",
-        search_path / ".opencode" / "skills",
-        search_path / ".openhands" / "skills",
-        search_path / ".pi" / "skills",
-        search_path / ".qoder" / "skills",
-        search_path / ".roo" / "skills",
-        search_path / ".trae" / "skills",
-        search_path / ".windsurf" / "skills",
-        search_path / ".zencoder" / "skills",
+        search_path / 'skills',
+        search_path / 'skills' / '.curated',
+        search_path / 'skills' / '.experimental',
+        search_path / 'skills' / '.system',
+        search_path / '.agent' / 'skills',
+        search_path / '.agents' / 'skills',
+        search_path / '.claude' / 'skills',
+        search_path / '.cline' / 'skills',
+        search_path / '.codebuddy' / 'skills',
+        search_path / '.codex' / 'skills',
+        search_path / '.commandcode' / 'skills',
+        search_path / '.continue' / 'skills',
+        search_path / '.cursor' / 'skills',
+        search_path / '.github' / 'skills',
+        search_path / '.goose' / 'skills',
+        search_path / '.iflow' / 'skills',
+        search_path / '.junie' / 'skills',
+        search_path / '.kilocode' / 'skills',
+        search_path / '.kiro' / 'skills',
+        search_path / '.mux' / 'skills',
+        search_path / '.neovate' / 'skills',
+        search_path / '.openclaude' / 'skills',
+        search_path / '.opencode' / 'skills',
+        search_path / '.openhands' / 'skills',
+        search_path / '.pi' / 'skills',
+        search_path / '.qoder' / 'skills',
+        search_path / '.roo' / 'skills',
+        search_path / '.trae' / 'skills',
+        search_path / '.windsurf' / 'skills',
+        search_path / '.zencoder' / 'skills',
     ]
 
     for dir_path in priority_search_dirs:
@@ -166,7 +170,7 @@ async def discover_skills(
                     skill_dir = entry
                     if await _has_skill_md(skill_dir):
                         skill = await parse_skill_md(
-                            skill_dir / "SKILL.md", include_internal
+                            skill_dir / 'SKILL.md', include_internal
                         )
                         if skill and skill.name not in seen_names:
                             skills.append(skill)
@@ -179,7 +183,7 @@ async def discover_skills(
         all_skill_dirs = await _find_skill_dirs(search_path)
 
         for skill_dir in all_skill_dirs:
-            skill = await parse_skill_md(skill_dir / "SKILL.md", include_internal)
+            skill = await parse_skill_md(skill_dir / 'SKILL.md', include_internal)
             if skill and skill.name not in seen_names:
                 skills.append(skill)
                 seen_names.add(skill.name)
