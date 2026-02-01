@@ -48,6 +48,13 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-name = ["skillsmd"]
 
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+
+
 [tool.ruff.lint]
 extend-select = ["T201"]
 
