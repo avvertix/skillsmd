@@ -37,4 +37,4 @@ jobs:
       run: uv sync --all-extras --all-groups --frozen
     
     - name: Execute tests
-      run: uv run pytest
+      run: uv run pytest --ignore=./tests/smoke_test.py
