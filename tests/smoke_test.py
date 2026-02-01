@@ -5,4 +5,5 @@ recommended to check that e.g. assets are included."""
 
 from skillsmd.cli import main
 
-main()
+if __name__ == '__main__':
+    main()

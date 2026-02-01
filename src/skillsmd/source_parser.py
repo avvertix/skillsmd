@@ -139,7 +139,7 @@ def parse_source(input_str: str) -> ParsedSource:
         )
 
     # GitHub URL with path: https://github.com/owner/repo/tree/branch/path/to/skill
-    github_tree_with_path = re.match(
+    github_tree_with_path = re.search(
         r'github\.com/([^/]+)/([^/]+)/tree/([^/]+)/(.+)', input_str
     )
     if github_tree_with_path:
@@ -152,7 +152,7 @@ def parse_source(input_str: str) -> ParsedSource:
         )
 
     # GitHub URL with branch only: https://github.com/owner/repo/tree/branch
-    github_tree = re.match(r'github\.com/([^/]+)/([^/]+)/tree/([^/]+)$', input_str)
+    github_tree = re.search(r'github\.com/([^/]+)/([^/]+)/tree/([^/]+)$', input_str)
     if github_tree:
         owner, repo, ref = github_tree.groups()
         return ParsedSource(

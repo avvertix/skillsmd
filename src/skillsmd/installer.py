@@ -6,7 +6,7 @@ import re
 import shutil
 from pathlib import Path
 
-from skillsmd.agents import get_agents, get_agent_config, detect_installed_agents
+from skillsmd.agents import get_agents, detect_installed_agents
 from skillsmd.constants import AGENTS_DIR, SKILLS_SUBDIR
 from skillsmd.skills import parse_skill_md
 from skillsmd.types import (
@@ -67,7 +67,10 @@ def get_canonical_skills_dir(is_global: bool, cwd: str | None = None) -> Path:
 async def _clean_and_create_directory(path: Path) -> None:
     """Cleans and recreates a directory for skill installation."""
     try:
-        if path.exists():
+        # Handle symlinks first (including broken ones)
+        if path.is_symlink():
+            path.unlink()
+        elif path.exists():
             shutil.rmtree(path)
     except Exception:
         pass

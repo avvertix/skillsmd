@@ -1,12 +1,11 @@
 """Tests for the skillsmd CLI."""
 
 import re
-from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
 
-from skillsmd.cli import app, __version__
+from skillsmd import __version__
+from skillsmd.cli import app
 
 
 runner = CliRunner()

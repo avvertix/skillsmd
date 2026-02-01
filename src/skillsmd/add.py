@@ -1,25 +1,21 @@
 """Add command implementation for the skillsmd CLI."""
 
-import asyncio
 import io
 import sys
 from pathlib import Path
 
 from rich.console import Console
 from rich.prompt import Confirm
-from rich.table import Table
 
 from skillsmd.agents import get_agents, detect_installed_agents
 from skillsmd.git import clone_repo, cleanup_temp_dir, GitCloneError
 from skillsmd.installer import (
     get_canonical_path,
-    install_remote_skill_for_agent,
     install_skill_for_agent,
-    is_skill_installed,
 )
 from skillsmd.skills import discover_skills, filter_skills, get_skill_display_name
-from skillsmd.source_parser import parse_source, get_owner_repo
-from skillsmd.types import InstallMode, Skill, ALL_AGENT_TYPES
+from skillsmd.source_parser import parse_source
+from skillsmd.types import InstallMode, Skill
 
 
 def _setup_utf8_encoding() -> None:

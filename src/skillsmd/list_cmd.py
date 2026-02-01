@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 
 from rich.console import Console
-from rich.table import Table
 
 from skillsmd.agents import get_agents
 from skillsmd.installer import list_installed_skills

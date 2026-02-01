@@ -57,18 +57,18 @@ def run_init(name: str | None = None) -> None:
         f'  1. Edit [cyan]{display_path}[/cyan] to define your skill instructions'
     )
     console.print(
-        f'  2. Update the [cyan]name[/cyan] and [cyan]description[/cyan] in the frontmatter'
+        '  2. Update the [cyan]name[/cyan] and [cyan]description[/cyan] in the frontmatter'
     )
     console.print()
     console.print('[dim]Publishing:[/dim]')
     console.print(
-        f'  [dim]GitHub:[/dim]  Push to a repo, then [cyan]skillsmd add <owner>/<repo>[/cyan]'
+        '  [dim]GitHub:[/dim]  Push to a repo, then [cyan]skillsmd add <owner>/<repo>[/cyan]'
     )
     console.print(
         f'  [dim]URL:[/dim]     Host the file, then [cyan]skillsmd add https://example.com/{display_path}[/cyan]'
     )
     console.print()
     console.print(
-        f'Browse existing skills for inspiration at [cyan]https://skills.sh/[/cyan]'
+        'Browse existing skills for inspiration at [cyan]https://skills.sh/[/cyan]'
     )
     console.print()
