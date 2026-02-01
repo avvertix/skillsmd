@@ -1,12 +1,12 @@
 [project]
 name = "skillsmd"
-version = "0.0.2"
+version = "0.1.0"
 description = "The open agent skills ecosystem - Python CLI"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-    { name = "Alessio", email = "5672748+avvertix@users.noreply.github.com" }
+    { name = "Alessio", email = "avvertix@users.noreply.github.com" }
 ]
 keywords = ["skills", "agents", "cli", "ai", "llm"]
 classifiers = [
